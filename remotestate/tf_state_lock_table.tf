@@ -13,9 +13,7 @@ resource "aws_dynamodb_table" "tf_state_lock" {
     type = "S"
   }
 
-  tags = {
-    site = local.site
-  }
+  tags = local.tags
 }
 
 data "template_file" "tf_state_lock_table_access" {

@@ -11,9 +11,7 @@ resource "aws_s3_bucket" "daily_wombat_terraform_state" {
     enabled = true
   }
 
-  tags = {
-    site = local.site
-  }
+  tags = local.tags
 }
 
 data "template_file" "tf_state_bucket_access" {
