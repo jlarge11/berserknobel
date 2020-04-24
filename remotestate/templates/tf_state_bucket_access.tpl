@@ -9,8 +9,8 @@
             },
             "Action": "s3:*",
             "Resource": [
-                "arn:aws:s3:::${s3_bucket}",
-                "arn:aws:s3:::${s3_bucket}/*"
+                "arn:aws:s3:::${state_bucket}",
+                "arn:aws:s3:::${state_bucket}/*"
             ]
         }
     ]

@@ -2,9 +2,9 @@ variable "aws_access_key_id" {}
 variable "aws_secret_access_key" {}
 
 locals {
-  s3_bucket = "daily-wombat-terraform-state"
+  site = "dailywombat"
+  state_bucket = "daily-wombat-terraform-state"
   state_lock_table = "tf_state_lock"
-  admin_user_arn = "arn:aws:iam::848364476882:user/jlarge"
 }
 
 provider "aws" {
@@ -13,30 +13,30 @@ provider "aws" {
   region     = "us-west-2"
 }
 
-data "template_file" "remotestate_bucket_full_access" {
-  template = "${file("${path.module}/templates/bucket_full_access.tpl")}"
+data "template_file" "tf_state_bucket_access" {
+  template = "${file("${path.module}/templates/tf_state_bucket_access.tpl")}"
 
   vars = {
-    user_arn = local.admin_user_arn
-    s3_bucket = local.s3_bucket
+    user_arn = "arn:aws:iam::848364476882:user/jlarge"
+    state_bucket = local.state_bucket
   }
 }
 
-resource "aws_s3_bucket" "daily-wombat-terraform-state" {
-  bucket = "daily-wombat-terraform-state"
+resource "aws_s3_bucket" "daily_wombat_terraform_state" {
+  bucket = local.state_bucket
   acl    = "private"
-  policy = data.template_file.remotestate_bucket_full_access.rendered
+  policy = data.template_file.tf_state_bucket_access.rendered
 
   versioning {
     enabled = true
   }
 
   tags = {
-    site = "dailywombat"
+    site = local.site
   }
 }
 
-resource "aws_dynamodb_table" "terraform_statelock" {
+resource "aws_dynamodb_table" "tf_state_lock" {
   name           = local.state_lock_table
   read_capacity  = 20
   write_capacity = 20
@@ -46,10 +46,14 @@ resource "aws_dynamodb_table" "terraform_statelock" {
     name = "LockID"
     type = "S"
   }
+
+  tags = {
+    site = local.site
+  }
 }
 
-data "template_file" "state_lock_table_access" {
-  template = "${file("${path.module}/templates/state_lock_table_access.tpl")}"
+data "template_file" "tf_state_lock_table_access" {
+  template = "${file("${path.module}/templates/tf_state_lock_table_access.tpl")}"
 
   vars = {
     state_lock_table = local.state_lock_table
@@ -60,5 +64,5 @@ resource "aws_iam_user_policy" "tf_state_lock_table_access" {
   name = "tf_state_lock_table_access"
   user = "jlarge"
 
-  policy = data.template_file.state_lock_table_access.rendered
+  policy = data.template_file.tf_state_lock_table_access.rendered
 }
