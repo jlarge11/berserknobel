@@ -19,6 +19,7 @@ terraform {
   backend "s3" {
     bucket = "daily-wombat-terraform-state"
     key    = "main"
+    dynamodb_table = "tf_state_lock"
     region = "us-west-2"
   }
 }
@@ -27,10 +28,10 @@ resource "aws_dynamodb_table" "funtimes" {
   name           = "funtimes"
   read_capacity  = 20
   write_capacity = 20
-  hash_key       = "id"
+  hash_key       = "bravo"
 
   attribute {
-    name = "id"
+    name = "bravo"
     type = "S"
   }
 
