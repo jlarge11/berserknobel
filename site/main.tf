@@ -12,7 +12,7 @@ locals {
 provider "aws" {
   access_key = var.aws_access_key_id
   secret_key = var.aws_secret_access_key
-  region     = "us-west-2"
+  region     = "us-west-1"
 }
 
 terraform {
@@ -20,7 +20,7 @@ terraform {
     bucket = "daily-wombat-terraform-state"
     key    = "main"
     dynamodb_table = "tf_state_lock"
-    region = "us-west-2"
+    region = "us-west-1"
   }
 }
 
