@@ -43,12 +43,12 @@ data "external" "cert_request" {
   program = ["bash", "./request_cert.sh"]
 
   query = {
-    site_name = "${local.site_name}"
+    site_name = local.site_name
   }
 }
 
 resource "aws_s3_bucket" "site_bucket" {
-  bucket = "${local.site_name}"
+  bucket = local.site_name
   acl = "public-read"
 
   website {
@@ -58,31 +58,31 @@ resource "aws_s3_bucket" "site_bucket" {
 }
 
 resource "aws_route53_zone" "site_zone" {
-  name = "${local.site_name}"
+  name = local.site_name
 }
 
 resource "aws_route53_record" "site_cname" {
-  zone_id = "${aws_route53_zone.site_zone.zone_id}"
-  name = "${local.site_name}"
+  zone_id = aws_route53_zone.site_zone.zone_id
+  name = local.site_name
   type = "NS"
   ttl = "30"
 
   records = [
-    "${aws_route53_zone.site_zone.name_servers.0}",
-    "${aws_route53_zone.site_zone.name_servers.1}",
-    "${aws_route53_zone.site_zone.name_servers.2}",
-    "${aws_route53_zone.site_zone.name_servers.3}"
+    aws_route53_zone.site_zone.name_servers.0,
+    aws_route53_zone.site_zone.name_servers.1,
+    aws_route53_zone.site_zone.name_servers.2,
+    aws_route53_zone.site_zone.name_servers.3
   ]
 }
 
 resource "aws_cloudfront_distribution" "site_distribution" {
   origin {
-    domain_name = "${aws_s3_bucket.site_bucket.bucket_domain_name}"
+    domain_name = aws_s3_bucket.site_bucket.bucket_domain_name
     origin_id = "${local.site_name}-origin"
   }
 
   enabled = true
-  aliases = ["${local.site_name}"]
+  aliases = [local.site_name]
   price_class = "PriceClass_100"
   default_root_object = "index.html"
 
@@ -113,7 +113,7 @@ resource "aws_cloudfront_distribution" "site_distribution" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = "${data.external.cert_request.result.CertificateArn}"
+    acm_certificate_arn = data.external.cert_request.result.CertificateArn
     ssl_support_method  = "sni-only"
     minimum_protocol_version = "TLSv1.2_2018"
   }
