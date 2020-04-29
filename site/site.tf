@@ -25,42 +25,11 @@ terraform {
   }
 }
 
-resource "aws_dynamodb_table" "funtimes" {
-  name           = "funtimes"
-  read_capacity  = 20
-  write_capacity = 20
-  hash_key       = "alpha"
-
-  attribute {
-    name = "alpha"
-    type = "S"
-  }
-
-  tags = local.tags
-}
-
-data "external" "cert_request" {
-  program = ["bash", "./request_cert.sh"]
-
-  query = {
-    site_name = local.site_name
-  }
-}
-
-resource "aws_s3_bucket" "site_bucket" {
-  bucket = local.site_name
-  acl = "public-read"
-
-  website {
-    index_document = "index.html"
-    error_document = "error.html"
-  }
-}
-
 resource "aws_route53_zone" "site_zone" {
   name = local.site_name
 }
 
+/*
 resource "aws_route53_record" "site_cname" {
   zone_id = aws_route53_zone.site_zone.zone_id
   name = local.site_name
@@ -73,6 +42,17 @@ resource "aws_route53_record" "site_cname" {
     aws_route53_zone.site_zone.name_servers.2,
     aws_route53_zone.site_zone.name_servers.3
   ]
+}
+*/
+
+resource "aws_s3_bucket" "site_bucket" {
+  bucket = local.site_name
+  acl = "public-read"
+
+  website {
+    index_document = "index.html"
+    error_document = "error.html"
+  }
 }
 
 resource "aws_cloudfront_distribution" "site_distribution" {
@@ -113,7 +93,7 @@ resource "aws_cloudfront_distribution" "site_distribution" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = data.external.cert_request.result.CertificateArn
+    acm_certificate_arn = data.terraform_remote_state.cert.cert_arn
     ssl_support_method  = "sni-only"
     minimum_protocol_version = "TLSv1.2_2018"
   }
