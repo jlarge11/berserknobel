@@ -28,10 +28,12 @@ terraform {
 
 resource "aws_route53_zone" "site_zone" {
   name = local.domain
+  tags = local.tags
 }
 
 resource "aws_s3_bucket" "site_bucket" {
   bucket = local.domain
+  tags = local.tags
   acl = "public-read"
 
   website {
@@ -58,6 +60,7 @@ resource "aws_cloudfront_distribution" "site_distribution" {
     origin_id = "${local.domain}-origin"
   }
 
+  tags = local.tags
   enabled = true
   aliases = [local.domain]
   price_class = "PriceClass_100"
