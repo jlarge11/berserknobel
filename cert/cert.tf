@@ -2,10 +2,11 @@ variable "aws_access_key_id" {}
 variable "aws_secret_access_key" {}
 
 locals {
-  site_name = "www.dailywombat.com"
+  site_name = "dailywombat"
+  domain = "www.${local.site_name}.com"
 
   tags = {
-    site = "dailywombat"
+    site = local.site_name
   }
 }
 
@@ -26,7 +27,7 @@ terraform {
 }
 
 resource "aws_acm_certificate" "cert" {
-  domain_name       = local.site_name
+  domain_name       = local.domain
   validation_method = "EMAIL"
   # validation_method = "DNS"
 

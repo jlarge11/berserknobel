@@ -2,10 +2,11 @@ variable "aws_access_key_id" {}
 variable "aws_secret_access_key" {}
 
 locals {
-  site_name = "www.dailywombat.com"
+  site_name = "dailywombat"
+  domain = "www.${local.site_name}.com"
 
   tags = {
-    site = "dailywombat"
+    site = local.site_name
   }
 }
 
@@ -26,27 +27,11 @@ terraform {
 }
 
 resource "aws_route53_zone" "site_zone" {
-  name = local.site_name
+  name = local.domain
 }
-
-/*
-resource "aws_route53_record" "site_cname" {
-  zone_id = aws_route53_zone.site_zone.zone_id
-  name = local.site_name
-  type = "NS"
-  ttl = "30"
-
-  records = [
-    aws_route53_zone.site_zone.name_servers.0,
-    aws_route53_zone.site_zone.name_servers.1,
-    aws_route53_zone.site_zone.name_servers.2,
-    aws_route53_zone.site_zone.name_servers.3
-  ]
-}
-*/
 
 resource "aws_s3_bucket" "site_bucket" {
-  bucket = local.site_name
+  bucket = local.domain
   acl = "public-read"
 
   website {
@@ -59,7 +44,7 @@ data "terraform_remote_state" "cert" {
   backend = "remote"
 
   config = {
-    organization = "dailywombat"
+    organization = local.site_name
 
     workspaces = {
       name = "cert-prod" # or cert-${var.environment} and set environment in TF cloud
@@ -70,11 +55,11 @@ data "terraform_remote_state" "cert" {
 resource "aws_cloudfront_distribution" "site_distribution" {
   origin {
     domain_name = aws_s3_bucket.site_bucket.bucket_domain_name
-    origin_id = "${local.site_name}-origin"
+    origin_id = "${local.domain}-origin"
   }
 
   enabled = true
-  aliases = [local.site_name]
+  aliases = [local.domain]
   price_class = "PriceClass_100"
   default_root_object = "index.html"
 
@@ -83,7 +68,7 @@ resource "aws_cloudfront_distribution" "site_distribution" {
                         "PATCH", "POST", "PUT"]
 
     cached_methods   = ["GET", "HEAD"]
-    target_origin_id = "${local.site_name}-origin"
+    target_origin_id = "${local.domain}-origin"
 
     forwarded_values {
       query_string = true
