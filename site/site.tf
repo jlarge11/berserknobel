@@ -55,6 +55,18 @@ resource "aws_s3_bucket" "site_bucket" {
   }
 }
 
+data "terraform_remote_state" "cert" {
+  backend = "remote"
+
+  config = {
+    organization = "dailywombat"
+
+    workspaces = {
+      name = "cert-prod" # or cert-${var.environment} and set environment in TF cloud
+    }
+  }
+}
+
 resource "aws_cloudfront_distribution" "site_distribution" {
   origin {
     domain_name = aws_s3_bucket.site_bucket.bucket_domain_name
@@ -93,7 +105,7 @@ resource "aws_cloudfront_distribution" "site_distribution" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = data.terraform_remote_state.cert.cert_arn
+    acm_certificate_arn = data.terraform_remote_state.cert.outputs.cert_arn
     ssl_support_method  = "sni-only"
     minimum_protocol_version = "TLSv1.2_2018"
   }
