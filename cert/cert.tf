@@ -3,7 +3,7 @@ variable "aws_secret_access_key" {}
 
 locals {
   site_name = "dailywombat"
-  domain = "www.${local.site_name}.com"
+  domain = "${local.site_name}.com"
 
   tags = {
     site = local.site_name

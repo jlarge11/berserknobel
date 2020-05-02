@@ -3,7 +3,7 @@ variable "aws_secret_access_key" {}
 
 locals {
   site_name = "dailywombat"
-  domain = "www.${local.site_name}.com"
+  domain = "${local.site_name}.com"
 
   tags = {
     site = local.site_name
@@ -31,6 +31,19 @@ resource "aws_route53_zone" "site_zone" {
   tags = local.tags
 }
 
+resource "aws_route53_record" "site_dns_record" {
+  zone_id = aws_route53_zone.site_zone.zone_id
+
+  name = local.domain
+  type = "A"
+
+  alias {
+    name                   = aws_cloudfront_distribution.site_distribution.domain_name
+    zone_id                = aws_cloudfront_distribution.site_distribution.hosted_zone_id
+    evaluate_target_health = false
+  }
+}
+
 resource "aws_s3_bucket" "site_bucket" {
   bucket = local.domain
   tags = local.tags
@@ -54,10 +67,45 @@ data "terraform_remote_state" "cert" {
   }
 }
 
+resource "aws_cloudfront_origin_access_identity" "oai" {
+  comment = "OAI for dailwombat.com"
+}
+
+data "aws_iam_policy_document" "site_bucket_iam_policy_doc" {
+  statement {
+    actions   = ["s3:GetObject"]
+    resources = ["${aws_s3_bucket.site_bucket.arn}/*"]
+
+    principals {
+      type        = "AWS"
+      identifiers = [aws_cloudfront_origin_access_identity.oai.iam_arn]
+    }
+  }
+
+  statement {
+    actions   = ["s3:ListBucket"]
+    resources = [aws_s3_bucket.site_bucket.arn]
+
+    principals {
+      type        = "AWS"
+      identifiers = [aws_cloudfront_origin_access_identity.oai.iam_arn]
+    }
+  }
+}
+
+resource "aws_s3_bucket_policy" "site_bucket_policy" {
+  bucket = aws_s3_bucket.site_bucket.id
+  policy = data.aws_iam_policy_document.site_bucket_iam_policy_doc.json
+}
+
 resource "aws_cloudfront_distribution" "site_distribution" {
   origin {
     domain_name = aws_s3_bucket.site_bucket.bucket_domain_name
     origin_id = "${local.domain}-origin"
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.oai.cloudfront_access_identity_path
+    }
   }
 
   tags = local.tags
