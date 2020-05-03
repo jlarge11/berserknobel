@@ -26,6 +26,18 @@ terraform {
   }
 }
 
+data "terraform_remote_state" "site" {
+  backend = "remote"
+
+  config = {
+    organization = local.site_name
+
+    workspaces = {
+      name = "site-prod" # or site-${var.environment} and set environment in TF cloud
+    }
+  }
+}
+
 resource "aws_route53_zone" "site_zone" {
   name = local.domain
   tags = local.tags
