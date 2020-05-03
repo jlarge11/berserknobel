@@ -26,24 +26,6 @@ terraform {
   }
 }
 
-resource "aws_route53_zone" "site_zone" {
-  name = local.domain
-  tags = local.tags
-}
-
-resource "aws_route53_record" "site_dns_record" {
-  zone_id = aws_route53_zone.site_zone.zone_id
-
-  name = local.domain
-  type = "A"
-
-  alias {
-    name                   = aws_cloudfront_distribution.site_distribution.domain_name
-    zone_id                = aws_cloudfront_distribution.site_distribution.hosted_zone_id
-    evaluate_target_health = false
-  }
-}
-
 resource "aws_s3_bucket" "site_bucket" {
   bucket = local.domain
   tags = local.tags
@@ -146,4 +128,12 @@ resource "aws_cloudfront_distribution" "site_distribution" {
     ssl_support_method  = "sni-only"
     minimum_protocol_version = "TLSv1.2_2018"
   }
+}
+
+output "site_distribution_domain_name" {
+  value = aws_cloudfront_distribution.site_distribution.domain_name
+}
+
+output "site_distribution_hosted_zone_id" {
+  value = aws_cloudfront_distribution.site_distribution.hosted_zone_id
 }
