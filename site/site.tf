@@ -48,6 +48,7 @@ resource "aws_s3_bucket" "site_bucket" {
   bucket = local.domain
   tags = local.tags
   acl = "public-read"
+  force_destroy = true
 
   website {
     index_document = "index.html"
