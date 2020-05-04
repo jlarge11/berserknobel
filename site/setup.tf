@@ -1,5 +1,6 @@
 variable "aws_access_key_id" {}
 variable "aws_secret_access_key" {}
+variable "environment" {}
 
 locals {
   site_name = "dailywombat"
@@ -33,7 +34,7 @@ data "terraform_remote_state" "cert" {
     organization = local.site_name
 
     workspaces = {
-      name = "cert-prod" # or cert-${var.environment} and set environment in TF cloud
+      name = "cert-${var.environment}"
     }
   }
 }
