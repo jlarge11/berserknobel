@@ -14,7 +14,7 @@ Currently, each remote environment carries the following variables...
 This folder contains the TLS certificate for `dailywombat.com` that will be placed in the CloudFront distribution.  If you are recreating this, the cert will be in a Pending Approval state.  An email asking for approval will be sent to `justinlarge1974@gmail.com`.  Once approved, the cert will be in an Issued status in the Certificate Manager.  Note that, while most of this infrastructure is in `us-west-1`, the certificate is in `us-east-1`, because that's the only region AWS supports for certificates at this time.
 
 # The site folder
-This folder contains most of the infrastructure, including the S3 bucket for the static content and the CloudFront distribution that sits in front of it.  If you are recreating this, then you'll also need to reapply the `dns` folder to make sure its A record points to the new CloudFront distribution.
+This folder contains most of the infrastructure, including the S3 bucket for the static content and the CloudFront distribution that sits in front of it.  If you are recreating this, then you'll also need to reapply the `dns` folder to make sure its A record points to the new CloudFront distribution.  You'll also need to push up the static content up again by pulling down the [main-ui](https://github.com/daily-wombat/main-ui) project and running `npm run deploy`.
 
 # The dns folder
 This folder contains the DNS hosted zone as well as the A record that points to the CloudFront distribution in front of the static site.  If you are recreating this, you also need to do the following in the AWS console under Route53...
