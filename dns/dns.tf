@@ -1,3 +1,9 @@
+resource "null_resource" "warning" {
+  provisioner "local-exec" {
+    command = "echo 'Did you remember to use the tfapply script?  Running terraform apply by itself will put the name servers on the newly created hosted zone out of sync with the ones that are in the domain registration.'"
+  }
+}
+
 resource "aws_route53_zone" "site_zone" {
   name = local.domain
   tags = local.tags
