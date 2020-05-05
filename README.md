@@ -17,10 +17,19 @@ This folder contains the TLS certificate for `dailywombat.com` that will be plac
 This folder contains most of the infrastructure, including the S3 bucket for the static content and the CloudFront distribution that sits in front of it.  If you are recreating this, then you'll also need to reapply the `dns` folder to make sure its A record points to the new CloudFront distribution.  You'll also need to push up the static content up again by pulling down the [main-ui](https://github.com/daily-wombat/main-ui) project and running `npm run deploy`.
 
 # The dns folder
-This folder contains the DNS hosted zone as well as the A record that points to the CloudFront distribution in front of the static site.  If you are recreating this, you also need to do the following in the AWS console under Route53...
-* Navigate to the newly created hosted zone.
-* Click on the NS record which should contain four name servers.
-* In another tab, go to the `dailywombat.com` in the Registered Domains section.
-* Click on "Add or edit name servers".
-* One by one, replace the ones that are in there with the name servers that are in the NS record in the hosted zone in the other tab.
-* After a couple of minutes, go into a browser and navigate to `dailywombat.com`.
+This folder contains the DNS hosted zone as well as the A record that points to the CloudFront distribution in front of the static site.  **Warning:**  When applying, don't run `terraform apply` by itself.  Instead, run the `tfapply` script that's sitting in this folder, because it will take the extra step of syncing the name servers on the domain registration with the ones that were assigned to the newly created hosted zone.
+
+# Problems with name servers
+By far, my biggest hurdle in getting all of this to work is that every time the DNS hosted zone is recreated, four new name servers are randomly assigned to it, and these will not be the same servers that are in the domain registration.  It took me a day of troubleshooting before I realized this, mainly because I'm not experienced in troubleshooting DNS issues (I'm still pretty bad at it).  Once I saw this as the issue, I tried the following things...
+
+### Attempt 1:  Go into the AWS console and manually update the name servers
+This solved my problem right away, but I didn't want to stay with a manual solution very long.
+
+### Attempt 2:  See if there is a Terraform resource for the domain registration
+I did see a somewhat popular [issue](https://github.com/hashicorp/terraform/issues/5368) where somebody asked for a resource called `aws_route53_domain`, but from the looks it, it kind of died on the vine.
+
+### Attempt 3:  Add a local-exec provisioner with a script that syncs the name servers
+I think I could get this to work if I was doing local Terraform, but I ran into problems with Terraform Cloud because its worker servers don't have much software on them.  In particular, they don't have the AWS CLI.  I went down this road for a while but ultimately gave up on it.
+
+### Attempt 4:  Create a separate script that runs terraform apply and then syncs up the name servers
+This is what I went with.  It works, and it's better than dealing with things manually, but it's not my favorite thing in the world.  First of all, it takes that name server syncing out of Terraform, so technically you could argue that it's a form of configuration drift.  Second, it's real easy for somebody to forget about this script and simply run `terraform apply`.  I added in a warning message about this that gets displayed to the console, but still.
