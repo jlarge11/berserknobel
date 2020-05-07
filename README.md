@@ -21,7 +21,7 @@ This folder contains the DNS hosted zone for `dailywombat.com`.  It should be st
 # The site folder
 This folder contains the rest of the infrastructure.  You should be able to repave this as many times as you want, but whenever you do, you'll also need to push the static content up again by pulling down the [main-ui](https://github.com/daily-wombat/main-ui) project and running `npm run deploy`.
 
-# Building from Scratch
+# Building from scratch
 This section will provide you with instructions to completely build the Daily Wombat infrastructure.  The following assumptions are made...
 
 * None of the infrastructure is currently stood up.
@@ -29,15 +29,15 @@ This section will provide you with instructions to completely build the Daily Wo
 
 To build everything, do the following...
 1. Navigate to the `hostedzone` folder.
-* Run `terraform init`.  You'll be prompted to choose a workspace.  The only option right now is `prod`, so choose that.
-* Run `./tfapply` and say `yes` when it prompts for confirmation.  It's important that you don't run `terraform apply` on its own.  The `tfapply` script does some name server syncing that is explained further down in this writeup.
-* Navigate to the `site` folder.
-* Run `terraform init`.  You'll be prompted to choose a workspace.  The only option right now is `prod`, so choose that.
-* Run `tfapply` and say `yes` when it prompts for confirmation.  The creation of the CloudFront distribution takes a while.  The last time I ran this apply, it took around 10 minutes.
-* Navigate to the `main-ui` folder.
-* Run `npm run deploy`.  This will do a build and then push the contents up to your newly created S3 bucket.
-* Wait about an hour for your DNS and certificate to be fully propagated.  The wait time varies, and I don't know enough to say why.
-* Visit `dailywombat.com` on your browser.  It should open up with a generic ReactJS page.
+2. Run `terraform init`.  You'll be prompted to choose a workspace.  The only option right now is `prod`, so choose that.
+3. Run `./tfapply` and say `yes` when it prompts for confirmation.  It's important that you don't run `terraform apply` on its own.  The `tfapply` script does some name server syncing that is explained further down in this writeup.
+4. Navigate to the `site` folder.
+5. Run `terraform init`.  You'll be prompted to choose a workspace.  The only option right now is `prod`, so choose that.
+6. Run `tfapply` and say `yes` when it prompts for confirmation.  The creation of the CloudFront distribution takes a while.  The last time I ran this apply, it took around 10 minutes.
+7. Navigate to the `main-ui` folder.
+8. Run `npm run deploy`.  This will do a build and then push the contents up to your newly created S3 bucket.
+9. Wait about an hour for your DNS and certificate to be fully propagated.  The wait time varies, and I don't know enough to say why.
+10. Visit `dailywombat.com` on your browser.  It should open up with a generic ReactJS page.
 
 # Problems with name servers
 By far, my biggest hurdle in getting all of this to work is that every time the DNS hosted zone is recreated, four new name servers are randomly assigned to it, and these will not be the same servers that are in the domain registration.  It took me a day of troubleshooting before I realized this, mainly because I'm not experienced in troubleshooting DNS issues (I'm still pretty bad at it).  Once I saw this as the issue, I tried the following things...
