@@ -5,7 +5,13 @@ terraform apply
 # Get the nameservers in the newly created hosted zone and format it to be friendly to the subsequent AWS CLI command.
 name_servers_arg=`terraform show -json | jq -cr '.values.root_module.resources[] | select(.name | contains("site_zone")).values.name_servers[] | ("Name=" + .)'`
 
+echo 'Syncing the nameservers on the domain registration with the ones that are in the hosted zone.'
+echo
+
 aws route53domains update-domain-nameservers \
     --region us-east-1 \
     --domain-name dailywombat.com \
     --nameservers $name_servers_arg
+
+echo
+echo 'Hosted zone application complete.'

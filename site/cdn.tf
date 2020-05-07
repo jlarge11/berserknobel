@@ -3,6 +3,8 @@ resource "aws_cloudfront_origin_access_identity" "oai" {
 }
 
 resource "aws_cloudfront_distribution" "site_distribution" {
+  depends_on = [aws_acm_certificate_validation.cert]
+
   origin {
     domain_name = aws_s3_bucket.site_bucket.bucket_domain_name
     origin_id = "${local.domain}-origin"
