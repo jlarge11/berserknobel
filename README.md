@@ -1,22 +1,22 @@
 # Introduction
-This project contains all of the infrastructure for the `dailywombat.com` website.  This includes the following...
+This project provides a way to quickly stand up an AWS S3 static website by using Terraform with a Terraform Cloud backend.  When everything is created, you will have the following...
 
-* The S3 bucket that contains the static content for the site.
-* The CloudFront distribution that sits in front of the S3 bucket.
-* The SSL certificate that gets added to the CloudFront distribution.  This will be validated with DNS.
-* The Route53 hosted zone for the site.
+* The S3 bucket that contains the static content for your site.
+* The CloudFront distribution that sits in front of your S3 bucket.
+* The SSL certificate that gets added to your CloudFront distribution.  This will be validated with DNS.
+* The Route53 hosted zone for your site.
 
 # Remote State
-State and variable management is handled by Terraform Cloud in the [dailywombat](https://app.terraform.io/app/dailywombat/workspaces) organization.  Environment management (dev, prod, etc) is a little wonky with Terraform Cloud.  Each environment (e.g. `prod`) will be represented by one local workspace named `prod` and two remote workspaces with `prod` combined with the particular infrastructure folder (e.g. `site-prod`).  Currently, the only environment is `prod`, so that means the Terraform Cloud organization currently has `hostedzone-prod` and `site-prod`.  If I added a `dev` environment, I would also have `hostedzone-dev` and `site-dev`.   Unfortunately, that means I have to repeat many of the same variables in all of them.  I'm not really sure of a better way to manage this.  Local `tfvars` files will force me to complicate my `terraform` commands, and some of these variables contain secrets.
+State and variable management is handled by Terraform Cloud in an organization that you create. Environment management (dev, prod, etc) is a little wonky with Terraform Cloud.  Each environment (e.g. `prod`) will be represented by one local workspace named `prod` and two remote workspaces with `prod` combined with the particular infrastructure folder (e.g. `site-prod`).  Currently, the only environment is `prod`, so that means your Terraform Cloud organization will have `hostedzone-prod` and `site-prod`.  If you add a `dev` environment, you would also have `hostedzone-dev` and `site-dev`.   Unfortunately, that means you have to repeat many of the same variables in all of them.  I'm not really sure of a better way to manage this.  Local `tfvars` files will force you to complicate your `terraform` commands, and some of these variables contain secrets.
 
-Currently, each remote environment carries the following variables...
+Currently, each remote environment needs to carry the following variables...
 
-* `aws_access_key_id` for the `jlarge` IAM user.
-* `aws_secret_access_key` for the `jlarge` IAM user.
+* `aws_access_key_id` for the IAM user that will be authenticating your Terraform run to AWS.
+* `aws_secret_access_key` for the IAM user that will be authenticating your Terraform run to AWS.
 * `environment` - My original attempt was to avoid having this variable and instead refer `var.workspace` in the config, but that always brings back the value `default` for some reason.  I found an [issue](https://github.com/hashicorp/terraform/issues/22802) out there that gets into that confusion, but it appears to remain unresolved.
 
 # The hostedzone folder
-This folder contains the DNS hosted zone for `dailywombat.com`.  It should be stood up before applying the `site` folder.  **Important:**  When applying, do not run `terraform apply` on its own.  Instead, run `./tfapply` which will also run an AWS CLI command to sync the name servers between the newly created hosted zone and the domain registration.  This is admittedly pretty awkward, which is why I separated this part into its own folder.  While it should be fine to tear down and repave the rest of the infrastructure in this project, the hosted zone should probably be left alone once it's been created, especially since it costs $0.50 every time you create a new one.  For more details about these name server sync issues, I've provided more details further down in this writeup.
+This folder contains the DNS hosted zone for your site.  It should be stood up before applying the `site` folder.  **Important:**  When applying, do not run `terraform apply` on its own.  Instead, run `./tfapply` which will also run an AWS CLI command to sync the name servers between the newly created hosted zone and the domain registration.  This is admittedly pretty awkward, which is why I separated this part into its own folder.  While it should be fine to tear down and repave the rest of the infrastructure in this project, the hosted zone should probably be left alone once it's been created, especially since it costs $0.50 every time you create a new one.  For more details about these name server sync issues, I've provided more details further down in this writeup.
 
 # The site folder
 This folder contains the rest of the infrastructure.  You should be able to repave this as many times as you want, but whenever you do, you'll also need to push the static content up again by pulling down the [main-ui](https://github.com/daily-wombat/main-ui) project and running `npm run deploy`.
