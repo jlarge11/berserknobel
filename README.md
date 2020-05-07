@@ -28,10 +28,10 @@ By far, my biggest hurdle in getting all of this to work is that every time the 
 This solved my problem right away, but I didn't want to stay with a manual solution very long.
 
 ### Attempt 2:  See if there is a Terraform resource for the domain registration
-I did see a somewhat popular [issue](https://github.com/hashicorp/terraform/issues/5368) where somebody asked for a resource called `aws_route53_domain`, but from the looks it, it kind of died on the vine.
+I did see a somewhat popular [issue](https://github.com/hashicorp/terraform/issues/5368) where somebody asked for a resource called `aws_route53_domain`, but from the looks of it, it kind of died on the vine.
 
 ### Attempt 3:  Add a local-exec provisioner with a script that syncs the name servers
 I think I could get this to work if I was doing local Terraform, but I ran into problems with Terraform Cloud because its worker servers don't have much software on them.  In particular, they don't have the AWS CLI.  I went down this road for a while but ultimately gave up on it.
 
 ### Attempt 4:  Create a separate script that runs terraform apply and then syncs up the name servers
-This is what I went with.  It works, and it's better than dealing with things manually, but it's not my favorite thing in the world.  First of all, it takes that name server syncing out of Terraform, so technically you could argue that it's a form of configuration drift.  Second, it's real easy for somebody to forget about this script and simply run `terraform apply`.  I added in a warning message about this that gets displayed to the console, but still.
+This is what I went with.  It works, and it's better than dealing with things manually, but it's not my favorite thing in the world.  First of all, it takes that name server syncing out of Terraform, so technically you could argue that it's a form of configuration drift.  Second, it's real easy for somebody to forget about this script and simply run `terraform apply`.  I mitigate this somewhat by placing this stuff in its own folder and advising that we don't touch it once it's created.
