@@ -3,7 +3,7 @@ This project contains all of the infrastructure for the `dailywombat.com` websit
 
 * The S3 bucket that contains the static content for the site.
 * The CloudFront distribution that sits in front of the S3 bucket.
-* The SSL certificate that gets added to the CloudFront distribution.
+* The SSL certificate that gets added to the CloudFront distribution.  This will be validated with DNS.
 * The Route53 hosted zone for the site.
 
 # Remote State
