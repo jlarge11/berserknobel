@@ -3,6 +3,8 @@ resource "aws_cloudfront_origin_access_identity" "oai" {
 }
 
 resource "aws_cloudfront_distribution" "site_distribution" {
+  depends_on = [aws_acm_certificate_validation.cert]
+
   origin {
     domain_name = aws_s3_bucket.site_bucket.bucket_domain_name
     origin_id = "${local.domain}-origin"
@@ -45,7 +47,7 @@ resource "aws_cloudfront_distribution" "site_distribution" {
   }
 
   viewer_certificate {
-    acm_certificate_arn = data.terraform_remote_state.cert.outputs.cert_arn
+    acm_certificate_arn = aws_acm_certificate.cert.arn
     ssl_support_method  = "sni-only"
     minimum_protocol_version = "TLSv1.2_2018"
   }

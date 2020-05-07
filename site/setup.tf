@@ -17,6 +17,13 @@ provider "aws" {
   region     = "us-west-1"
 }
 
+provider "aws" {
+  alias = "east"
+  access_key = var.aws_access_key_id
+  secret_key = var.aws_secret_access_key
+  region     = "us-east-1"
+}
+
 terraform {
   backend "remote" {
     organization = "dailywombat"
@@ -27,14 +34,14 @@ terraform {
   }
 }
 
-data "terraform_remote_state" "cert" {
+data "terraform_remote_state" "hostedzone" {
   backend = "remote"
 
   config = {
     organization = local.site_name
 
     workspaces = {
-      name = "cert-${var.environment}"
+      name = "hostedzone-${var.environment}"
     }
   }
 }

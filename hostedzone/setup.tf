@@ -22,19 +22,7 @@ terraform {
     organization = "dailywombat"
 
     workspaces {
-      prefix = "dns-"
-    }
-  }
-}
-
-data "terraform_remote_state" "site" {
-  backend = "remote"
-
-  config = {
-    organization = local.site_name
-
-    workspaces = {
-      name = "site-${var.environment}"
+      prefix = "hostedzone-"
     }
   }
 }
