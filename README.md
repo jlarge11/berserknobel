@@ -20,7 +20,7 @@ Currently, each remote environment needs to carry the following variables...
 This folder contains the DNS hosted zone for your site.  It should be stood up before applying the `site` folder.  **Important:**  When applying, do not run `terraform apply` on its own.  Instead, run `./tfapply` which will also run an AWS CLI command to sync the name servers between the newly created hosted zone and the domain registration.  This is admittedly pretty awkward, which is why I separated this part into its own folder.  While it should be fine to tear down and repave the rest of the infrastructure in this project, the hosted zone should probably be left alone once it's been created, especially since it costs $0.50 every time you create a new one.  For more details about these name server sync issues, I've provided more details further down in this writeup.
 
 # The site folder
-This folder contains the rest of the infrastructure.  You should be able to repave this as many times as you want, but whenever you do, you'll also need to push the static content up again by pulling down the [main-ui](https://github.com/daily-wombat/main-ui) project and running `npm run deploy`.
+This folder contains the rest of the infrastructure.  You should be able to repave this as many times as you want, but whenever you do, you'll also need to push the static content up again by going to your `main-ui` folder (or your `main-ui` repo if you separated it out) and running `npm run deploy`.
 
 # Building your site
 This section will provide you with instructions to completely build the infrastructure for your new site.  The following assumptions are made...
@@ -42,7 +42,7 @@ Unlike most of our AWS infrastructure, we're going to do this manually.  This wi
 6. Accept the defaults and click "Continue".
 7. Accept the terms and click on "Complete Order".
 
-This can take up to three days, but the last time I did this, it took about an hour.  You'll get an email when it's done, but as for the rest of these steps, it's probably better if you just wait until the domain is ready.
+This can take up to three days, but the last time I did this, it took about an hour.  If you try earlier than that, your browser will probably return some sort of certificate error.
 
 ### Terraform Cloud Setup
 1. Navigate to [Terraform Cloud](https://app.terraform.io/app).
@@ -84,7 +84,7 @@ Commit and push after that command finishes.
 7. Navigate to the `main-ui` folder.
 8. Run `npm run deploy`.  This will do a build and then push the contents up to your newly created S3 bucket.
 9. Wait about an hour for your DNS and certificate to be fully propagated.  The wait time varies, and I don't know enough to say why.
-10. Visit `__yoursitehere__.com` on your browser.  It should open up with a generic ReactJS page.
+10. Visit `berserknobel.com` on your browser.  It should open up with a generic ReactJS page.
 
 # Problems with name servers
 By far, my biggest hurdle in getting all of this to work is that every time the DNS hosted zone is recreated, four new name servers are randomly assigned to it, and these will not be the same servers that are in the domain registration.  It took me a day of troubleshooting before I realized this, mainly because I'm not experienced in troubleshooting DNS issues (I'm still pretty bad at it).  Once I saw this as the issue, I tried the following things...
