@@ -41,7 +41,7 @@ Unlike most of our AWS infrastructure, we're going to do this manually.
 6. Accept the defaults and click "Continue".
 7. Accept the terms and click on "Complete Order".
 
-This can take up to three days.  You'll get an email when it's done, but as for the rest of these steps, it's probably better if you just wait until the domain is ready.
+This can take up to three days, but the last time I did this, it took about an hour.  You'll get an email when it's done, but as for the rest of these steps, it's probably better if you just wait until the domain is ready.
 
 ### Terraform Cloud Setup
 1. Navigate to [Terraform Cloud](https://app.terraform.io/app).
@@ -57,18 +57,15 @@ This can take up to three days.  You'll get an email when it's done, but as for 
 Both of the workspaces will show a screen that says that it's waiting for configuration, but that's fine for now.  We'll take care of this later.
 
 ### Changing your code to use your domain
-To change the code base to the domain you're using, run the following command:  
+To change the code base to the domain you're using, run the following command:
+
 ```bash
-egrep -lRZ 'yoursitehere' . | xargs -0 -l sed -i -e 's/yousitehere/berserknobel/g'
+egrep -lRZ 'yoursitehere' . | xargs -0 -l sed -i -e 's/yoursitehere/berserknobel/g'
 ```
 
 Commit and push after that command finishes.
 
-
-
-
-
-To build everything, do the following...
+### Building with Terraform
 1. Navigate to the `hostedzone` folder.
 2. Run `terraform init`.  You'll be prompted to choose a workspace.  The only option right now is `prod`, so choose that.
 3. Run `./tfapply` and say `yes` when it prompts for confirmation.  It's important that you don't run `terraform apply` on its own.  The `tfapply` script does some name server syncing that is explained further down in this writeup.
