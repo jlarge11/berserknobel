@@ -22,16 +22,16 @@ This folder contains the DNS hosted zone for your site.  It should be stood up b
 This folder contains the rest of the infrastructure.  You should be able to repave this as many times as you want, but whenever you do, you'll also need to push the static content up again by pulling down the [main-ui](https://github.com/daily-wombat/main-ui) project and running `npm run deploy`.
 
 # Building your site
-This section will provide you with instructions to completely build the Daily Wombat infrastructure.  The following assumptions are made...
+This section will provide you with instructions to completely build the infrastructure for your new site.  The following assumptions are made...
 
 * You have an AWS root account setup.
-* You already have an admin level IAM user with an access key and a secret key.  This user will authenticate Terraform to AWS.
+* You already have an admin level IAM user with an access key and a secret key.  This user will authenticate Terraform to AWS.  In the real world, you'll probably be more sophisticated with your IAM setup, but this should get us by for what we're learning here.
 
 ### Coming up with your domain name
-This can be anything you like, but if you're just playing around, one thing you can do is to visit [this site](https://frightanic.com/goodies_content/docker-names.php) which will generate one of those funny names that Docker gives you.  The last time I ran this, I got `berserk_nobel`, so for this writeup, I'm going to go with a domain of `berserknobel.com`.
+This can be anything you like, but if you're just playing around, one thing you can do is to visit [this site](https://frightanic.com/goodies_content/docker-names.php) which will generate one of those funny names that Docker gives you.  The last time I ran this, I got `berserk_nobel`, so for this writeup, I'm going to go with a domain of `berserknobel.com`.  When you execute these instructions, you would simply replace `berserknobel` with the site name that you're going with.
 
 ### Registering on Route53
-Unlike most of our AWS infrastructure, we're going to do this manually.
+Unlike most of our AWS infrastructure, we're going to do this manually.  This will cost you $12 if you're using a `.com` domain (or $282 for a `.sucks` domain, holy smokes).  Alternatively, if you already have a domain in Route53 for playing around with, you can simply use that one and skip this section.  If you decide to register your own domain in Route53, then you'll need to do the following...
 
 1. Login to the AWS console as your admin IAM user.
 2. Navigate to Route53.
