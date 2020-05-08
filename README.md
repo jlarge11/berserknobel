@@ -3,6 +3,7 @@ This project provides a way to quickly stand up an AWS S3 static website by usin
 
 * The S3 bucket that contains the static content for your site.
 * The CloudFront distribution that sits in front of your S3 bucket.
+* An Origin Access Identity that the CloudFront distribution will use to authenticate to your S3 bucket.
 * The SSL certificate that gets added to your CloudFront distribution.  This will be validated with DNS.
 * The Route53 hosted zone for your site.
 
