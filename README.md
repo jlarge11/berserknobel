@@ -68,7 +68,7 @@ Follow all of the same steps you took in the previous section when you created t
 To change the code base to the domain you're using, run the following command:
 
 ```bash
-egrep -lRZ 'yoursitehere' . | xargs -0 -l sed -i -e 's/yoursitehere/berserknobel/g'
+egrep -lRZ '__yoursitehere__' . | xargs -0 -l sed -i -e 's/__yoursitehere__/berserknobel/g'
 ```
 
 Commit and push after that command finishes.
@@ -83,7 +83,7 @@ Commit and push after that command finishes.
 7. Navigate to the `main-ui` folder.
 8. Run `npm run deploy`.  This will do a build and then push the contents up to your newly created S3 bucket.
 9. Wait about an hour for your DNS and certificate to be fully propagated.  The wait time varies, and I don't know enough to say why.
-10. Visit `berserknobel.com` on your browser.  It should open up with a generic ReactJS page.
+10. Visit `__yoursitehere__.com` on your browser.  It should open up with a generic ReactJS page.
 
 # Problems with name servers
 By far, my biggest hurdle in getting all of this to work is that every time the DNS hosted zone is recreated, four new name servers are randomly assigned to it, and these will not be the same servers that are in the domain registration.  It took me a day of troubleshooting before I realized this, mainly because I'm not experienced in troubleshooting DNS issues (I'm still pretty bad at it).  Once I saw this as the issue, I tried the following things...

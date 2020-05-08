@@ -10,7 +10,7 @@ echo
 
 aws route53domains update-domain-nameservers \
     --region us-east-1 \
-    --domain-name berserknobel.com \
+    --domain-name __yoursitehere__.com \
     --nameservers $name_servers_arg
 
 echo
