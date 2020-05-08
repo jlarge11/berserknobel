@@ -49,12 +49,20 @@ This can take up to three days, but the last time I did this, it took about an h
 3. For Organization Name, name it after your domain.  For this writeup, I named mine `berserknobel`.
 4. Provide your email address and click "Create Organization".
 5. You'll be asked to connect to a Version Control Provider.  Just click on "No VCS Connection".  I've not explored this part myself.
-6. For "Workspace Name", go with `site-prod`.
-7. Click "Create Workspace".
-8. Go back to the main page for your organization.
-9. Click on "New Workspace".  This will take you with the same screens as you saw with your first workspace.  Do the same thing with this one, but name the workspace `hostedzone-prod`.
+6. You'll be asked to create a workspace, but just cancel out of this.  We'll take care of this in the next section.
 
-Both of the workspaces will show a screen that says that it's waiting for configuration, but that's fine for now.  We'll take care of this later.
+### Creating the hostedzone-prod workspace
+1. Go back to the main page for your organization.
+2. Click on "New Workspace".
+3. For "Workspace Name", go with `site-prod`.
+4. Click "Create Workspace".  You'll be taken to the main page of that workspace, and it will say that it's waiting for configuration.  That's fine.  We'll take care of that later.
+5. Click on "Variables", and add the following...
+   * `aws_access_key_id` should be set to your IAM user's access key and marked as secret.
+   * `aws_secret_access_key` should be set to your IAM user's secret key and marked as secret.
+   * `environment` should be set to `prod`.  My original attempt was to avoid having this variable and instead refer `var.workspace` in the config, but that always brings back the value `default` for some reason.  I found an [issue](https://github.com/hashicorp/terraform/issues/22802) out there that gets into that confusion, but it appears to remain unresolved.
+
+### Creating the site-prod workspace
+Follow all of the same steps you took in the previous section when you created the `hostedzone-prod` workspace.
 
 ### Changing your code to use your domain
 To change the code base to the domain you're using, run the following command:
