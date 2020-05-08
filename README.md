@@ -58,7 +58,11 @@ Both of the workspaces will show a screen that says that it's waiting for config
 
 ### Changing your code to use your domain
 To change the code base to the domain you're using, run the following command:  
+```bash
+egrep -lRZ 'yoursitehere' . | xargs -0 -l sed -i -e 's/yousitehere/berserknobel/g'
+```
 
+Commit and push after that command finishes.
 
 
 
