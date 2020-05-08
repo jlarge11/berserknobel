@@ -21,11 +21,48 @@ This folder contains the DNS hosted zone for your site.  It should be stood up b
 # The site folder
 This folder contains the rest of the infrastructure.  You should be able to repave this as many times as you want, but whenever you do, you'll also need to push the static content up again by pulling down the [main-ui](https://github.com/daily-wombat/main-ui) project and running `npm run deploy`.
 
-# Building from scratch
+# Building your site
 This section will provide you with instructions to completely build the Daily Wombat infrastructure.  The following assumptions are made...
 
-* None of the infrastructure is currently stood up.
-* You are starting with a freshly cloned copy of this repo and the [main-ui](https://github.com/daily-wombat/main-ui) repo.
+* You have an AWS root account setup.
+* You already have an admin level IAM user with an access key and a secret key.  This user will authenticate Terraform to AWS.
+
+### Coming up with your domain name
+This can be anything you like, but if you're just playing around, one thing you can do is to visit [this site](https://frightanic.com/goodies_content/docker-names.php) which will generate one of those funny names that Docker gives you.  The last time I ran this, I got `berserk_nobel`, so for this writeup, I'm going to go with a domain of `berserknobel.com`.
+
+### Registering on Route53
+Unlike most of our AWS infrastructure, we're going to do this manually.
+
+1. Login to the AWS console as your admin IAM user.
+2. Navigate to Route53.
+3. Under "Register Domain", type `berserknobel` and choose `.com` from the dropdown.
+4. Click "Check".
+5. If it's available, then click "Add to Cart" and then "Continue".
+6. Accept the defaults and click "Continue".
+7. Accept the terms and click on "Complete Order".
+
+This can take up to three days.  You'll get an email when it's done, but as for the rest of these steps, it's probably better if you just wait until the domain is ready.
+
+### Terraform Cloud Setup
+1. Navigate to [Terraform Cloud](https://app.terraform.io/app).
+2. Under "Choose an organization", click on "Create new organization".
+3. For Organization Name, name it after your domain.  For this writeup, I named mine `berserknobel`.
+4. Provide your email address and click "Create Organization".
+5. You'll be asked to connect to a Version Control Provider.  Just click on "No VCS Connection".  I've not explored this part myself.
+6. For "Workspace Name", go with `site-prod`.
+7. Click "Create Workspace".
+8. Go back to the main page for your organization.
+9. Click on "New Workspace".  This will take you with the same screens as you saw with your first workspace.  Do the same thing with this one, but name the workspace `hostedzone-prod`.
+
+Both of the workspaces will show a screen that says that it's waiting for configuration, but that's fine for now.  We'll take care of this later.
+
+### Changing your code to use your domain
+To change the code base to the domain you're using, run the following command:  
+
+
+
+
+
 
 To build everything, do the following...
 1. Navigate to the `hostedzone` folder.
@@ -37,7 +74,7 @@ To build everything, do the following...
 7. Navigate to the `main-ui` folder.
 8. Run `npm run deploy`.  This will do a build and then push the contents up to your newly created S3 bucket.
 9. Wait about an hour for your DNS and certificate to be fully propagated.  The wait time varies, and I don't know enough to say why.
-10. Visit `dailywombat.com` on your browser.  It should open up with a generic ReactJS page.
+10. Visit `berserknobel.com` on your browser.  It should open up with a generic ReactJS page.
 
 # Problems with name servers
 By far, my biggest hurdle in getting all of this to work is that every time the DNS hosted zone is recreated, four new name servers are randomly assigned to it, and these will not be the same servers that are in the domain registration.  It took me a day of troubleshooting before I realized this, mainly because I'm not experienced in troubleshooting DNS issues (I'm still pretty bad at it).  Once I saw this as the issue, I tried the following things...
