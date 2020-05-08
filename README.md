@@ -1,11 +1,11 @@
 # Introduction
 This project provides a way to quickly stand up an AWS S3 static website by using Terraform with a Terraform Cloud backend.  When everything is created, you will have the following...
 
-* The S3 bucket that contains the static content for your site.
-* The CloudFront distribution that sits in front of your S3 bucket.
+* An S3 bucket that contains the static content for your site.
+* An CloudFront distribution that sits in front of your S3 bucket.
 * An Origin Access Identity that the CloudFront distribution will use to authenticate to your S3 bucket.
-* The SSL certificate that gets added to your CloudFront distribution.  This will be validated with DNS.
-* The Route53 hosted zone for your site.
+* An SSL certificate that gets added to your CloudFront distribution.  This will be validated with DNS.
+* A Route53 hosted zone for your site.
 
 # Remote State
 State and variable management is handled by Terraform Cloud in an organization that you create. Environment management (dev, prod, etc) is a little wonky with Terraform Cloud.  Each environment (e.g. `prod`) will be represented by one local workspace named `prod` and two remote workspaces with `prod` combined with the particular infrastructure folder (e.g. `site-prod`).  Currently, the only environment is `prod`, so that means your Terraform Cloud organization will have `hostedzone-prod` and `site-prod`.  If you add a `dev` environment, you would also have `hostedzone-dev` and `site-dev`.   Unfortunately, that means you have to repeat many of the same variables in all of them.  I'm not really sure of a better way to manage this.  Local `tfvars` files will force you to complicate your `terraform` commands, and some of these variables contain secrets.
