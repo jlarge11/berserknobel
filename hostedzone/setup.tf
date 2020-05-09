@@ -3,7 +3,7 @@ variable "aws_secret_access_key" {}
 variable "environment" {}
 
 locals {
-  site_name = "__yoursitehere__"
+  site_name = "berserknobel"
   domain = "${local.site_name}.com"
 
   tags = {
@@ -19,7 +19,7 @@ provider "aws" {
 
 terraform {
   backend "remote" {
-    organization = "__yoursitehere__"
+    organization = "berserknobel"
 
     workspaces {
       prefix = "hostedzone-"
