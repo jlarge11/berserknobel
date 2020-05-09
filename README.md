@@ -86,6 +86,9 @@ Commit and push after that command finishes.
 9. Wait about an hour for your DNS and certificate to be fully propagated.  The wait time varies, and I don't know enough to say why.
 10. Visit `berserknobel.com` on your browser.  It should open up with a generic ReactJS page.
 
+# Tearing Down
+Tearing everything down should be simple.  You just run `terraform destroy` from your `site` folder and then do the same from your `hostedzone` folder.  If you're really done with everything, you might also want to go into Terraform Cloud and remove your organization as well.
+
 # Problems with name servers
 By far, my biggest hurdle in getting all of this to work is that every time the DNS hosted zone is recreated, four new name servers are randomly assigned to it, and these will not be the same servers that are in the domain registration.  It took me a day of troubleshooting before I realized this, mainly because I'm not experienced in troubleshooting DNS issues (I'm still pretty bad at it).  Once I saw this as the issue, I tried the following things...
 
