@@ -55,7 +55,7 @@ This can take up to three days, but the last time I did this, it took about an h
 ### Creating the hostedzone-prod workspace
 1. Go back to the main page for your organization.
 2. Click on "New Workspace".
-3. For "Workspace Name", go with `site-prod`.
+3. For "Workspace Name", enter `hostedzone-prod`.
 4. Click "Create Workspace".  You'll be taken to the main page of that workspace, and it will say that it's waiting for configuration.  That's fine.  We'll take care of that later.
 5. Click on "Variables", and add the following...
    * `aws_access_key_id` should be set to your IAM user's access key and marked as secret.
