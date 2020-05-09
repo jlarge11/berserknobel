@@ -65,6 +65,9 @@ This can take up to three days, but the last time I did this, it took about an h
 ### Creating the site-prod workspace
 Follow all of the same steps you took in the previous section when you created the `hostedzone-prod` workspace.
 
+### Forking this repo
+At this point, you'll probably want to fork this repo and potentially rename it to something that resembles the domain name you chose.  Also, if you're doing anything more long term, you might also want to take the `main-ui` folder and break that out into its own Git repo.
+
 ### Changing your code to use your domain
 To change the code base to the domain you're using, run the following command:
 
